@@ -121,7 +121,7 @@ func (cmd *cmdLatency) OutputLatency() {
 }
 
 func (cmd *cmdLatency) outputServersStatus(latencyMap map[string]duraSlice) {
-	var status string
+	var status ServerStatus
 	var serverDown bool = false
 	for server, latencys := range latencyMap {
 		var lsum time.Duration
