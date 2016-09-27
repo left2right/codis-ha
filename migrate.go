@@ -3,9 +3,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/CodisLabs/codis/pkg/models"
-	"github.com/CodisLabs/codis/pkg/utils"
-	"github.com/CodisLabs/codis/pkg/utils/log"
+	"github.com/left2right/codis/pkg/models"
+	"github.com/left2right/codis/pkg/utils"
+	"github.com/left2right/codis/pkg/utils/log"
 	"github.com/wandoulabs/zkhelper"
 	"time"
 )

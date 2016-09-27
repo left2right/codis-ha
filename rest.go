@@ -7,8 +7,8 @@ import (
 
 	"encoding/json"
 	//"github.com/CodisLabs/codis/pkg/models"
-	"github.com/CodisLabs/codis/pkg/utils/errors"
-	"github.com/CodisLabs/codis/pkg/utils/log"
+	"github.com/left2right/codis/pkg/utils/errors"
+	"github.com/left2right/codis/pkg/utils/log"
 	//"github.com/juju/errors"
 	"io/ioutil"
 )

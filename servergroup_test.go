@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/alicebob/miniredis"
-	"github.com/wandoulabs/codis/pkg/models"
+	"github.com/left2right/codis/pkg/models"
 	"testing"
 	"time"
 )
@@ -15,12 +15,12 @@ const GROUP_ID = 1
 var (
 	redisServer, _ = miniredis.Run()
 	groups1        = []models.ServerGroup{
-		models.ServerGroup{
+		{
 			Servers: []*models.Server{
-				&models.Server{GroupId: GROUP_ID, Type: models.SERVER_TYPE_MASTER, Addr: "localhost:xxx"},
-				&models.Server{GroupId: GROUP_ID, Type: models.SERVER_TYPE_SLAVE, Addr: redisServer.Addr()},
-				&models.Server{GroupId: GROUP_ID, Type: models.SERVER_TYPE_SLAVE, Addr: "xx"},
-				&models.Server{GroupId: GROUP_ID, Type: models.SERVER_TYPE_OFFLINE, Addr: "xx"},
+				{GroupId: GROUP_ID, Type: models.SERVER_TYPE_MASTER, Addr: "localhost:xxx"},
+				{GroupId: GROUP_ID, Type: models.SERVER_TYPE_SLAVE, Addr: redisServer.Addr()},
+				{GroupId: GROUP_ID, Type: models.SERVER_TYPE_SLAVE, Addr: "xx"},
+				{GroupId: GROUP_ID, Type: models.SERVER_TYPE_OFFLINE, Addr: "xx"},
 			},
 		},
 	}
@@ -117,9 +117,9 @@ func TestCheckAliveAndPromote(t *testing.T) {
 
 	//test no slave
 	groups = []models.ServerGroup{
-		models.ServerGroup{
+		{
 			Servers: []*models.Server{
-				&models.Server{GroupId: GROUP_ID, Type: models.SERVER_TYPE_MASTER, Addr: "dead master"},
+				{GroupId: GROUP_ID, Type: models.SERVER_TYPE_MASTER, Addr: "dead master"},
 			},
 		},
 	}

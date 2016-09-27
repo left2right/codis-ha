@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/CodisLabs/codis/pkg/models"
 	"github.com/juju/errors"
+	"github.com/left2right/codis/pkg/models"
 	log "github.com/ngaut/logging"
 	"time"
 )

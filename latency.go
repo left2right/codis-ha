@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/CodisLabs/codis/pkg/models"
 	"github.com/juju/errors"
+	"github.com/left2right/codis/pkg/models"
 	log "github.com/ngaut/logging"
 	"hash/crc32"
 	"strconv"
@@ -11,6 +11,14 @@ import (
 )
 
 type duraSlice []time.Duration
+
+type ServerStatus string
+
+const (
+	SERVER_STATUS_NORMAL ServerStatus = "normal"
+	SERVER_STATUS_SLOW   ServerStatus = "slow"
+	SERVER_STATUS_DOWN   ServerStatus = "down"
+)
 
 type outElem struct {
 	key     string
@@ -106,14 +114,80 @@ func (cmd *cmdLatency) OutputLatency() {
 			fmt.Printf("Latency:%q; Proxy:%s; Server:%s; Slot:%d; Key:%s\n", out.latency, out.proxy, out.server, out.slot, out.key)
 		}
 	}
+
+	cmd.outputServersStatus(latencyMap)
+
+	//fmt.Printf("Codis latency: %f ms\n", float32(total/time.Duration(count))/1000000)
+}
+
+func (cmd *cmdLatency) outputServersStatus(latencyMap map[string]duraSlice) {
+	var status ServerStatus
+	var serverDown bool = false
 	for server, latencys := range latencyMap {
 		var lsum time.Duration
-		for _, l := range latencys {
-			lsum += l
+		if cmd.IsServer(server) {
+			for _, l := range latencys {
+				lsum += l
+			}
+			var average float32 = float32(lsum/time.Duration(len(latencys))) / 1000000
+			if average > 2800 {
+				status = SERVER_STATUS_DOWN
+				serverDown = true
+			} else if average > 30 {
+				status = SERVER_STATUS_SLOW
+			} else {
+				status = SERVER_STATUS_NORMAL
+			}
+
+			fmt.Printf("Server %s latency: %f ms and status %s\n", server, average, status)
+		} else {
+			continue
 		}
-		fmt.Printf("Server %s latency: %f ms\n", server, float32(lsum/time.Duration(len(latencys)))/1000000)
 	}
-	fmt.Printf("Codis latency: %f ms\n", float32(total/time.Duration(count))/1000000)
+
+	for server, latencys := range latencyMap {
+		var lsum time.Duration
+		if cmd.IsServer(server) {
+			continue
+		} else {
+			var count int = 0
+			for _, l := range latencys {
+				lsum += l
+				if l > 2*time.Second {
+					count++
+				}
+			}
+			var average float32 = float32(lsum/time.Duration(len(latencys))) / 1000000
+			if average > 2800 {
+				status = SERVER_STATUS_DOWN
+				serverDown = true
+			} else if average > 30 {
+				status = SERVER_STATUS_SLOW
+			} else {
+				status = SERVER_STATUS_NORMAL
+			}
+
+			if count > 4 {
+				status = SERVER_STATUS_DOWN
+			}
+
+			if serverDown {
+				status = SERVER_STATUS_NORMAL
+			}
+
+			fmt.Printf("Proxy %s latency: %f ms and status %s\n", server, average, status)
+		}
+	}
+}
+
+func (cmd *cmdLatency) IsServer(server string) bool {
+	var isServer bool = true
+	for _, proxy := range cmd.proxys {
+		if server == proxy.Addr {
+			isServer = false
+		}
+	}
+	return isServer
 }
 
 func HashSlot(s string) uint32 {
