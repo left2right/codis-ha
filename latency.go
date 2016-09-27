@@ -12,6 +12,14 @@ import (
 
 type duraSlice []time.Duration
 
+type ServerStatus string
+
+const (
+	SERVER_STATUS_NORMAL ServerStatus = "normal"
+	SERVER_STATUS_SLOW   ServerStatus = "slow"
+	SERVER_STATUS_DOWN   ServerStatus = "down"
+)
+
 type outElem struct {
 	key     string
 	latency time.Duration
@@ -123,12 +131,12 @@ func (cmd *cmdLatency) outputServersStatus(latencyMap map[string]duraSlice) {
 			}
 			var average float32 = float32(lsum/time.Duration(len(latencys))) / 1000000
 			if average > 2800 {
-				status = "down"
+				status = SERVER_STATUS_DOWN
 				serverDown = true
 			} else if average > 30 {
-				status = "slow"
+				status = SERVER_STATUS_SLOW
 			} else {
-				status = "normal"
+				status = SERVER_STATUS_NORMAL
 			}
 
 			fmt.Printf("Server %s latency: %f ms and status %s\n", server, average, status)
@@ -151,23 +159,23 @@ func (cmd *cmdLatency) outputServersStatus(latencyMap map[string]duraSlice) {
 			}
 			var average float32 = float32(lsum/time.Duration(len(latencys))) / 1000000
 			if average > 2800 {
-				status = "down"
+				status = SERVER_STATUS_DOWN
 				serverDown = true
 			} else if average > 30 {
-				status = "slow"
+				status = SERVER_STATUS_SLOW
 			} else {
-				status = "normal"
+				status = SERVER_STATUS_NORMAL
 			}
 
 			if count > 4 {
-				status = "down"
+				status = SERVER_STATUS_DOWN
 			}
 
 			if serverDown {
-				status = "normal"
+				status = SERVER_STATUS_NORMAL
 			}
 
-			fmt.Printf("Server %s latency: %f ms and status %s\n", server, average, status)
+			fmt.Printf("Proxy %s latency: %f ms and status %s\n", server, average, status)
 		}
 	}
 }
