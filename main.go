@@ -82,9 +82,7 @@ Options:
 
 	args.quiet, _ = d["--quiet"].(bool)
 
-	if args.zookeeper, _ = d["--zookeeper"].(string); args.zookeeper == "" {
-		log.Panic("--zookeeper parameter needed")
-	}
+	args.zookeeper, _ = d["--zookeeper"].(string)
 
 	args.kill = false
 	if d["--kill"] != nil {
