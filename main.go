@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	//"github.com/CodisLabs/codis/pkg/utils/errors"
-	"github.com/CodisLabs/codis/pkg/utils/log"
 	"github.com/docopt/docopt-go"
+	"github.com/left2right/codis/pkg/utils/log"
 	//log "github.com/ngaut/logging"
 	"strconv"
 	"time"
@@ -24,7 +24,7 @@ var args struct {
 }
 
 var (
-	version  string              = "0.2.0"
+	version  string              = "0.3.0"
 	callHttp fnHttpCall          = httpCall
 	acf      codisCheckerFactory = func(addr string, timeout time.Duration) CodisChecker {
 		return &redisChecker{
